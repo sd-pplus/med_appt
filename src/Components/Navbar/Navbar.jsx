@@ -1,9 +1,26 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
+
+const getSessionUser = () => {
+  const authToken = sessionStorage.getItem('auth-token');
+  const name = sessionStorage.getItem('name');
+  const email = sessionStorage.getItem('email');
+
+  if (!authToken) {
+    return { isLoggedIn: false, username: '' };
+  }
+
+  return {
+    isLoggedIn: true,
+    username: name || email || 'User',
+  };
+};
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [{ isLoggedIn, username }, setAuth] = useState(getSessionUser);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     setIsNavOpen((prev) => !prev);
@@ -11,6 +28,16 @@ const Navbar = () => {
 
   const closeNav = () => {
     setIsNavOpen(false);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('auth-token');
+    sessionStorage.removeItem('name');
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('phone');
+    setAuth({ isLoggedIn: false, username: '' });
+    closeNav();
+    navigate('/');
   };
 
   return (
@@ -65,18 +92,34 @@ const Navbar = () => {
             Appointments
           </a>
         </li>
-        {/* List item for the 'Sign Up' link */}
-        <li className="link">
-          <Link className="btn1" to="/signup" onClick={closeNav}>
-            Sign Up
-          </Link>
-        </li>
-        {/* List item for the 'Login' link */}
-        <li className="link">
-          <Link className="btn1" to="/login" onClick={closeNav}>
-            Login
-          </Link>
-        </li>
+
+        {isLoggedIn ? (
+          <>
+            <li className="link welcome-user">
+              <span>Welcome, {username}</span>
+            </li>
+            <li className="link">
+              <button className="btn1" type="button" onClick={handleLogout}>
+                Logout
+              </button>
+            </li>
+          </>
+        ) : (
+          <>
+            {/* List item for the 'Sign Up' link */}
+            <li className="link">
+              <Link className="btn1" to="/signup" onClick={closeNav}>
+                Sign Up
+              </Link>
+            </li>
+            {/* List item for the 'Login' link */}
+            <li className="link">
+              <Link className="btn1" to="/login" onClick={closeNav}>
+                Login
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

@@ -1,8 +1,8 @@
 // Following code has been commented with appropriate comments for your reference.
 import React, { useState } from 'react';
-import './Sign_Up.css'
+import './Sign_up.css'
 import { Link, useNavigate } from 'react-router-dom';
-import { API_URL } from '../../../config';
+import { API_URL } from '../../config';
 
 // Function component for Sign Up form
 const Sign_Up = () => {

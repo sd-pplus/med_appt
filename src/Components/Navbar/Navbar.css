@@ -104,6 +104,18 @@ nav {
     color: #3685fb;
 }
 
+.welcome-user span {
+    padding: 0 1rem;
+    color: #0d213f;
+    font-weight: 500;
+}
+
+nav button.btn1 {
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
 /* Media queries for mobile responsiveness */
 @media (max-width: 768px) {
     .nav__logo {
