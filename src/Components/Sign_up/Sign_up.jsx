@@ -4,6 +4,21 @@ import './Sign_up.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
 
+// Normalize API error payloads (register uses `error`, login uses `errors`)
+const getErrorMessage = (json) => {
+  if (!json) return 'Something went wrong';
+  if (Array.isArray(json.errors)) {
+    return json.errors.map((err) => err.msg).join(', ');
+  }
+  if (Array.isArray(json.error)) {
+    return json.error.map((err) => err.msg).join(', ');
+  }
+  if (typeof json.error === 'string') {
+    return json.error;
+  }
+  return 'Registration failed';
+};
+
 // Function component for Sign Up form
 const Sign_Up = () => {
   // State variables using useState hook
@@ -19,40 +34,42 @@ const Sign_Up = () => {
     e.preventDefault(); // Prevent default form submission
     setShowerr('');
 
-    // API Call to register user
-    const response = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        password: password,
-        phone: phone,
-      }),
-    });
+    try {
+      // API Call to register user
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+          phone: phone,
+        }),
+      });
 
-    const json = await response.json(); // Parse the response JSON
+      const json = await response.json(); // Parse the response JSON
 
-    if (json.authtoken) {
-      // Store user data in session storage
-      sessionStorage.setItem('auth-token', json.authtoken);
-      sessionStorage.setItem('name', name);
-      sessionStorage.setItem('phone', phone);
-      sessionStorage.setItem('email', email);
+      if (json.authtoken) {
+        // Store user data in session storage
+        sessionStorage.setItem('auth-token', json.authtoken);
+        sessionStorage.setItem('name', name);
+        sessionStorage.setItem('phone', phone);
+        sessionStorage.setItem('email', email);
 
-      // Redirect user to home page
-      navigate('/');
-      window.location.reload(); // Refresh the page
-    } else {
-      if (json.errors) {
-        for (const error of json.errors) {
-          setShowerr(error.msg); // Show error messages
-        }
+        // Redirect user to home page
+        navigate('/');
+        window.location.reload(); // Refresh the page
       } else {
-        setShowerr(json.error);
+        setShowerr(getErrorMessage(json));
       }
+    } catch (err) {
+      console.error(err);
+      setShowerr(
+        'Unable to reach the server. Make sure the API is running on ' +
+          API_URL
+      );
     }
   };
 
@@ -94,6 +111,7 @@ const Sign_Up = () => {
                 name="name"
                 id="name"
                 required
+                minLength={4}
                 className="form-control"
                 placeholder="Enter your name"
                 aria-describedby="helpId"
@@ -109,6 +127,9 @@ const Sign_Up = () => {
                 name="phone"
                 id="phone"
                 required
+                minLength={10}
+                pattern="[0-9]{10,}"
+                title="Phone number should be at least 10 digits"
                 className="form-control"
                 placeholder="Enter your phone number"
                 aria-describedby="helpId"
@@ -139,6 +160,7 @@ const Sign_Up = () => {
                 name="password"
                 id="password"
                 required
+                minLength={8}
                 className="form-control"
                 placeholder="Enter your password"
                 aria-describedby="helpId"

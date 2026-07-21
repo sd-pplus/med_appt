@@ -4,10 +4,25 @@ import './Login.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
 
+const getErrorMessage = (json) => {
+  if (!json) return 'Something went wrong';
+  if (Array.isArray(json.errors)) {
+    return json.errors.map((err) => err.msg).join(', ');
+  }
+  if (Array.isArray(json.error)) {
+    return json.error.map((err) => err.msg).join(', ');
+  }
+  if (typeof json.error === 'string') {
+    return json.error;
+  }
+  return 'Login failed';
+};
+
 const Login = () => {
   // State variables for email and password
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [showerr, setShowerr] = useState('');
 
   // Get navigation function from react-router-dom
   const navigate = useNavigate();
@@ -22,37 +37,60 @@ const Login = () => {
   // Function to handle login form submission
   const login = async (e) => {
     e.preventDefault();
-    // Send a POST request to the login API endpoint
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+    setShowerr('');
 
-    // Parse the response JSON
-    const json = await res.json();
-    if (json.authtoken) {
-      // If authentication token is received, store it in session storage
-      sessionStorage.setItem('auth-token', json.authtoken);
-      sessionStorage.setItem('email', email);
+    try {
+      // Send a POST request to the login API endpoint
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-      // Redirect to home page and reload the window so Navbar toggles to Logout
-      navigate('/');
-      window.location.reload();
-    } else {
-      // Handle errors if authentication fails
-      if (json.errors) {
-        for (const error of json.errors) {
-          alert(error.msg);
+      // Parse the response JSON
+      const json = await res.json();
+      if (json.authtoken) {
+        // If authentication token is received, store it in session storage
+        sessionStorage.setItem('auth-token', json.authtoken);
+        sessionStorage.setItem('email', email);
+
+        // Fetch name for Welcome message in Navbar
+        try {
+          const userRes = await fetch(`${API_URL}/api/auth/user`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              email: email,
+            },
+          });
+          const userJson = await userRes.json();
+          if (userJson.name) {
+            sessionStorage.setItem('name', userJson.name);
+          }
+          if (userJson.phone) {
+            sessionStorage.setItem('phone', userJson.phone);
+          }
+        } catch {
+          // Welcome can fall back to email via getItem("email")
         }
+
+        // Redirect to home page and reload the window so Navbar toggles to Logout
+        navigate('/');
+        window.location.reload();
       } else {
-        alert(json.error);
+        setShowerr(getErrorMessage(json));
       }
+    } catch (err) {
+      console.error(err);
+      setShowerr(
+        'Unable to reach the server. Make sure the API is running on ' +
+          API_URL
+      );
     }
   };
 
@@ -104,6 +142,11 @@ const Login = () => {
                   required
                 />
               </div>
+              {showerr && (
+                <div className="err" style={{ color: 'red' }}>
+                  {showerr}
+                </div>
+              )}
 
               <div className="btn-group">
                 {/* Login button */}
@@ -119,6 +162,7 @@ const Login = () => {
                   onClick={() => {
                     setEmail('');
                     setPassword('');
+                    setShowerr('');
                   }}
                 >
                   Reset
