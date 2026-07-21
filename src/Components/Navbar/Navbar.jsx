@@ -2,24 +2,15 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-const getSessionUser = () => {
-  const authToken = sessionStorage.getItem('auth-token');
-  const name = sessionStorage.getItem('name');
-  const email = sessionStorage.getItem('email');
-
-  if (!authToken) {
-    return { isLoggedIn: false, username: '' };
-  }
-
-  return {
-    isLoggedIn: true,
-    username: name || email || 'User',
-  };
-};
-
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [{ isLoggedIn, username }, setAuth] = useState(getSessionUser);
+  // Use getItem to check whether the user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!sessionStorage.getItem('auth-token')
+  );
+  // Use getItem to extract details about a specific field (email / name)
+  const [email, setEmail] = useState(sessionStorage.getItem('email') || '');
+  const [name, setName] = useState(sessionStorage.getItem('name') || '');
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -30,14 +21,18 @@ const Navbar = () => {
     setIsNavOpen(false);
   };
 
+  // Logout: clear stored fields with removeItem, then show Login again
   const handleLogout = () => {
     sessionStorage.removeItem('auth-token');
-    sessionStorage.removeItem('name');
     sessionStorage.removeItem('email');
+    sessionStorage.removeItem('name');
     sessionStorage.removeItem('phone');
-    setAuth({ isLoggedIn: false, username: '' });
+    setIsLoggedIn(false);
+    setEmail('');
+    setName('');
     closeNav();
     navigate('/');
+    window.location.reload();
   };
 
   return (
@@ -93,10 +88,14 @@ const Navbar = () => {
           </a>
         </li>
 
+        {/* Toggle Login / Logout using sessionStorage */}
         {isLoggedIn ? (
           <>
             <li className="link welcome-user">
-              <span>Welcome, {username}</span>
+              <span>
+                Welcome,{' '}
+                {name || sessionStorage.getItem('email') || email}
+              </span>
             </li>
             <li className="link">
               <button className="btn1" type="button" onClick={handleLogout}>
