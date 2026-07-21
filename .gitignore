@@ -1,9 +1,9 @@
-# Dependencies
+# Dependencies (client and server)
 node_modules
 .pnp
 .pnp.js
 
-# Build
+# Client build (Vite)
 dist
 dist-ssr
 build
@@ -18,7 +18,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment
+# Environment (client and server)
 .env
 .env.*
 !.env.example
@@ -31,6 +31,13 @@ coverage
 .cache
 .eslintcache
 *.tsbuildinfo
+
+# Server runtime / uploads
+uploads
+tmp
+temp
+*.pid
+*.seed
 
 # Editor
 .vscode/*
