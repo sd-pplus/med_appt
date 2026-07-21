@@ -1,0 +1,89 @@
+/* Styles for the main container */
+.container {
+    max-width: 900px; /* Maximum width of the container */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 40px; /* Padding inside the container */
+    margin-top: 10%; /* Top margin of 10% */
+}
+
+/* Styles for form groups */
+.form-group {
+    margin-bottom: 20px; /* Bottom margin for spacing between form groups */
+}
+
+/* Styles for form group labels */
+.form-group label {
+    display: block; /* Make labels display as block elements */
+    margin-bottom: 5px; /* Bottom margin for spacing below labels */
+    font-weight: bold; /* Bold text for labels */
+}
+
+/* Styles for form controls */
+.form-control {
+    width: 40%; /* Width of form controls */
+    padding: 8px; /* Padding inside form controls */
+    font-size: 16px; /* Font size of form controls */
+    border: 1px solid #ccc; /* Border around form controls */
+    border-radius: 4px; /* Border radius for rounded corners */
+}
+
+/* Styles for button groups */
+.btn-group {
+    margin-top: .0001px; /* Top margin for spacing above button groups */
+    margin-bottom: 20px; /* Bottom margin for spacing below button groups */
+}
+
+/* Styles for buttons */
+.btn {
+    padding: 10px 20px; /* Padding inside buttons */
+    font-size: 16px; /* Font size of buttons */
+    border: none; /* No border for buttons */
+    border-radius: 4px; /* Border radius for rounded corners on buttons */
+    cursor: pointer; /* Cursor style on hover for buttons */
+}
+
+/* Styles for primary buttons */
+.btn-primary {
+    background-color: #007bff; /* Background color for primary buttons */
+    color: #fff; /* Text color for primary buttons */
+}
+
+/* Styles for danger (red) buttons */
+.btn-danger {
+    background-color: #dc3545; /* Background color for danger buttons */
+    color: #fff; /* Text color for danger buttons */
+}
+
+/* Responsive layout for tablets and phones (768px or less) */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%; /* Use full screen width on small devices */
+        padding: 20px; /* Reduce padding for smaller screens */
+        margin-top: 15%; /* Adjust top spacing */
+    }
+
+    .login-grid {
+        display: block; /* Stack layout vertically instead of a multi-column grid */
+        width: 100%;
+    }
+
+    .login-form {
+        width: 100%; /* Form fills available width */
+    }
+
+    .form-control {
+        width: 100%; /* Inputs expand to full width for easier typing on mobile */
+        box-sizing: border-box;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-direction: column; /* Stack Login and Reset buttons */
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%; /* Full-width buttons for touch-friendly taps */
+    }
+}
+
