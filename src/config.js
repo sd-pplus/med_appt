@@ -1,5 +1,5 @@
-// In `npm run dev`, leave this empty so requests go through the Vite proxy (/api → lab server).
-// To hit a local Express server instead: VITE_API_URL=http://localhost:8181 npm run dev
-export const API_URL = import.meta.env.VITE_API_URL || '';
-
-console.log('API_URL :', API_URL || '(same-origin / Vite proxy)');
+export const API_URL = window.location.hostname === "localhost" ? "http://localhost:8181" : "https://sandeepqaops-8181.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai";
+console.log(
+    "API_URL :",
+    API_URL
+);
