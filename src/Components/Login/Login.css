@@ -1,4 +1,11 @@
 /* Styles for the main container */
+body {
+    margin: 0;
+    background-color: #ffffff;
+    color: #0d213f;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .container {
     max-width: 900px; /* Maximum width of the container */
     margin: 0 auto; /* Center the container horizontally */

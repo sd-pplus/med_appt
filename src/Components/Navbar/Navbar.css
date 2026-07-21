@@ -155,10 +155,14 @@ nav {
 
 /* Button styles */
 .btn1 {
+    display: inline-block;
+    padding: 0.4rem 1rem;
     border: 2px solid #3685fb;
     background-color: white;
     color: black;
     border-radius: 50px;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .btn1:hover {
