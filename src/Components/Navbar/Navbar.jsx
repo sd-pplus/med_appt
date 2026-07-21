@@ -81,6 +81,12 @@ const Navbar = () => {
             Home
           </Link>
         </li>
+        {/* List item for Instant Consultation Booking */}
+        <li className="link">
+          <Link to="/instant-consultation" onClick={closeNav}>
+            Instant Consultation
+          </Link>
+        </li>
         {/* List item for the 'Appointments' link */}
         <li className="link">
           <a href="#appointments" onClick={closeNav}>
