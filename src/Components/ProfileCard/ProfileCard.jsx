@@ -12,6 +12,14 @@ const ProfileCard = ({ onNavigate }) => {
       >
         Your Profile
       </Link>
+      <Link
+        to="/reports"
+        className="profile-card__link"
+        role="menuitem"
+        onClick={onNavigate}
+      >
+        Your Reports
+      </Link>
     </div>
   );
 };

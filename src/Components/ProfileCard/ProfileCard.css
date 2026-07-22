@@ -21,6 +21,10 @@
   white-space: nowrap;
 }
 
+.profile-card__link + .profile-card__link {
+  margin-top: 0.75rem;
+}
+
 .profile-card__link:hover {
   color: #3685fb;
 }
