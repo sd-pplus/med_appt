@@ -10,7 +10,6 @@ const ProfileForm = () => {
   // Set up state variables using the useState hook
   const [userDetails, setUserDetails] = useState({});
   const [updatedDetails, setUpdatedDetails] = useState({});
-  const [editMode, setEditMode] = useState(false);
 
   // Access the navigation functionality from React Router
   const navigate = useNavigate();
@@ -55,11 +54,6 @@ const ProfileForm = () => {
     }
   };
 
-  // Function to enable edit mode for profile details
-  const handleEdit = () => {
-    setEditMode(true);
-  };
-
   // Function to update state when user inputs new data
   const handleInputChange = (e) => {
     setUpdatedDetails({
@@ -96,9 +90,9 @@ const ProfileForm = () => {
         // Update the user details in session storage
         sessionStorage.setItem('name', updatedDetails.name);
         sessionStorage.setItem('phone', updatedDetails.phone);
+        sessionStorage.setItem('email', updatedDetails.email);
 
         setUserDetails(updatedDetails);
-        setEditMode(false);
         // Display success message to the user
         alert(`Profile Updated Successfully!`);
         navigate('/');
@@ -112,52 +106,39 @@ const ProfileForm = () => {
     }
   };
 
-  // Render the profile form with different sections based on edit mode
   return (
     <div className="profile-container">
-      {editMode ? (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              name="email"
-              value={userDetails.email || ''}
-              disabled // Disable the email field
-            />
-          </label>
-          <label>
-            Name
-            <input
-              type="text"
-              name="name"
-              value={updatedDetails.name || ''}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            Phone
-            <input
-              type="text"
-              name="phone"
-              value={updatedDetails.phone || ''}
-              onChange={handleInputChange}
-            />
-          </label>
-          <button type="submit">Save</button>
-        </form>
-      ) : (
-        <div className="profile-details">
-          <h1>Welcome, {userDetails.name}</h1>
-          <p>
-            <b>Email:</b> {userDetails.email}
-          </p>
-          <p>
-            <b>Phone:</b> {userDetails.phone}
-          </p>
-          <button onClick={handleEdit}>Edit</button>
-        </div>
-      )}
+      <h1>Welcome, {userDetails.name}</h1>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name
+          <input
+            type="text"
+            name="name"
+            value={updatedDetails.name || ''}
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          Phone
+          <input
+            type="text"
+            name="phone"
+            value={updatedDetails.phone || ''}
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          Email
+          <input
+            type="email"
+            name="email"
+            value={updatedDetails.email || ''}
+            onChange={handleInputChange}
+          />
+        </label>
+        <button type="submit">Save</button>
+      </form>
     </div>
   );
 };
