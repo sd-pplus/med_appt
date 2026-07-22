@@ -38,6 +38,22 @@ nav {
     cursor: pointer;
 }
 
+.welcome-user__button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #0d213f;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.welcome-user__button:hover {
+    background: none;
+    color: #3685fb;
+}
+
 /* Display dropdown menu on hover */
 .welcome-user:hover .dropdown-menu {
     display: block;

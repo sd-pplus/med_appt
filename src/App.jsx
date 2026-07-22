@@ -8,6 +8,8 @@ import Sign_Up from './Components/Sign_up/Sign_up';
 import Login from './Components/Login/Login';
 import InstantConsultation from './Components/InstantConsultation/InstantConsultation';
 import BookingConsultation from './Components/BookingConsultation';
+import ReviewForm from './Components/ReviewForm/ReviewForm';
+import Profile from './Components/ProfileCard/Profile';
 
 // Function component for the main App
 function App() {
@@ -28,6 +30,8 @@ function App() {
               element={<InstantConsultation />}
             />
             <Route path="/appointments" element={<BookingConsultation />} />
+            <Route path="/reviews" element={<ReviewForm />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </Notification>
       </BrowserRouter>

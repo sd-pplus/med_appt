@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ProfileCard from '../ProfileCard/ProfileCard';
 import './Navbar.css';
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(false);
   // Use getItem to check whether the user is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!sessionStorage.getItem('auth-token')
@@ -12,6 +14,7 @@ const Navbar = () => {
   const [email, setEmail] = useState(sessionStorage.getItem('email') || '');
   const [name, setName] = useState(sessionStorage.getItem('name') || '');
   const navigate = useNavigate();
+  const welcomeRef = useRef(null);
 
   const handleClick = () => {
     setIsNavOpen((prev) => !prev);
@@ -19,6 +22,7 @@ const Navbar = () => {
 
   const closeNav = () => {
     setIsNavOpen(false);
+    setShowProfileCard(false);
   };
 
   // Logout: clear stored fields with removeItem, then show Login again
@@ -30,10 +34,30 @@ const Navbar = () => {
     setIsLoggedIn(false);
     setEmail('');
     setName('');
+    setShowProfileCard(false);
     closeNav();
     navigate('/');
     window.location.reload();
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        welcomeRef.current &&
+        !welcomeRef.current.contains(event.target)
+      ) {
+        setShowProfileCard(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  const displayName =
+    name || sessionStorage.getItem('name') || email || 'User';
 
   return (
     <nav>
@@ -93,15 +117,27 @@ const Navbar = () => {
             Appointments
           </Link>
         </li>
+        {/* List item for the 'Reviews' link */}
+        <li className="link">
+          <Link to="/reviews" onClick={closeNav}>
+            Reviews
+          </Link>
+        </li>
 
         {/* Toggle Login / Logout using sessionStorage */}
         {isLoggedIn ? (
           <>
-            <li className="link welcome-user">
-              <span>
-                Welcome,{' '}
-                {name || sessionStorage.getItem('email') || email}
-              </span>
+            <li className="link welcome-user" ref={welcomeRef}>
+              <button
+                type="button"
+                className="welcome-user__button"
+                onClick={() => setShowProfileCard((prev) => !prev)}
+                aria-expanded={showProfileCard}
+                aria-haspopup="menu"
+              >
+                Welcome, {displayName}
+              </button>
+              {showProfileCard && <ProfileCard onNavigate={closeNav} />}
             </li>
             <li className="link">
               <button className="btn1" type="button" onClick={handleLogout}>
