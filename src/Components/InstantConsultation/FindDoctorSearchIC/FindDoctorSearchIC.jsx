@@ -1,49 +1,208 @@
-import React, { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './FindDoctorSearchIC.css';
-import { useNavigate, Navigate } from 'react-router-dom';
-
 
 const initSpeciality = [
-    'Dentist', 'Gynecologist/obstetrician', 'General Physician', 'Dermatologist', 'Ear-nose-throat (ent) Specialist', 'Homeopath', 'Ayurveda'
-]
+  'Dentist',
+  'Gynecologist/obstetrician',
+  'General Physician',
+  'Dermatologist',
+  'Ear-nose-throat (ent) Specialist',
+  'Homeopath',
+  'Ayurveda',
+];
+
+const DOCTORS_API = 'https://api.npoint.io/9a5543d36f1460da2f63';
+
+const MagnifyingGlass = ({ className = '' }) => (
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="7"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
 
 const FindDoctorSearchIC = () => {
-    const [doctorResultHidden, setDoctorResultHidden] = useState(true);
-    const [searchDoctor, setSearchDoctor] = useState('');
-    const [specialities, setSpecialities] = useState(initSpeciality);
-    const navigate = useNavigate();
-    const handleDoctorSelect = (speciality) => {
-        setSearchDoctor(speciality);
+  const [doctorResultHidden, setDoctorResultHidden] = useState(true);
+  const [searchDoctor, setSearchDoctor] = useState('');
+  const [specialities] = useState(initSpeciality);
+  const [doctors, setDoctors] = useState([]);
+  const navigate = useNavigate();
+  const searchBoxRef = useRef(null);
+
+  useEffect(() => {
+    fetch(DOCTORS_API)
+      .then((res) => res.json())
+      .then((data) => setDoctors(Array.isArray(data) ? data : []))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleFocus = () => {
+    setDoctorResultHidden(false);
+  };
+
+  const handleBlur = () => {
+    window.setTimeout(() => {
+      if (
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(document.activeElement)
+      ) {
         setDoctorResultHidden(true);
-        navigate(`/instant-consultation?speciality=${speciality}`);
-        window.location.reload();
-    }
-    return (
-        <div className='finddoctor'>
-            <center>
-                <h1>Find a doctor and Consult instantly</h1>
-                <div>               <i style={{color:'#000000',fontSize:'20rem'}} className="fa fa-user-md"></i>
-</div>                <div className="home-search-container"  style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                    <div className="doctor-search-box">
-                    {/* <p>Perform a search to see the results.</p> */}
+      }
+    }, 200);
+  };
 
-                        <input type="text" className="search-doctor-input-box" placeholder="Search doctors, clinics, hospitals, etc." onFocus={() => setDoctorResultHidden(false)} onBlur={() => setDoctorResultHidden(true)} value={searchDoctor} onChange={(e) => setSearchDoctor(e.target.value)} />
-                        
-                        <div className="findiconimg"><img className='findIcon' src={process.env.PUBLIC_URL + '/images/search.svg'} alt=""/></div>
-                        <div className="search-doctor-input-results" hidden={doctorResultHidden}>
-                            {
-                                specialities.map(speciality => <div className="search-doctor-result-item" key={speciality} onMouseDown={() => handleDoctorSelect(speciality)}>
-                                    <span><img src={process.env.PUBLIC_URL + '/images/search.svg'} alt="" style={{height:"10px", width:"10px"}} width="12" /></span>
-                                    <span>{speciality}</span>
-                                    <span>SPECIALITY</span>
-                                </div>)
-                            }
-                        </div>
-                    </div>
-                </div>
-            </center>
+  const handleSearchIconClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDoctorResultHidden((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(event.target)
+      ) {
+        setDoctorResultHidden(true);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSpecialitySelect = (speciality) => {
+    setSearchDoctor(speciality);
+    setDoctorResultHidden(true);
+    navigate(
+      `/instant-consultation?speciality=${encodeURIComponent(speciality)}`
+    );
+  };
+
+  const handleDoctorNameSelect = (doctor) => {
+    setSearchDoctor(doctor.name);
+    setDoctorResultHidden(true);
+    navigate(
+      `/instant-consultation?name=${encodeURIComponent(doctor.name.trim())}`
+    );
+  };
+
+  const query = searchDoctor.trim().toLowerCase();
+
+  const filteredSpecialities = specialities.filter((speciality) =>
+    speciality.toLowerCase().includes(query)
+  );
+
+  const filteredDoctorNames = doctors.filter((doctor) =>
+    doctor.name.toLowerCase().includes(query)
+  );
+
+  const hasResults =
+    filteredSpecialities.length > 0 || filteredDoctorNames.length > 0;
+
+  return (
+    <div className="finddoctor">
+      <center>
+        <h1>Find a doctor and Consult instantly</h1>
+        <div>
+          <i
+            style={{ color: '#000000', fontSize: '20rem' }}
+            className="fa fa-user-md"
+          ></i>
         </div>
-    )
-}
+        <div
+          className="home-search-container"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div className="doctor-search-box" ref={searchBoxRef}>
+            <div className="doctor-search-bar">
+              <input
+                type="text"
+                className="search-doctor-input-box"
+                placeholder="Search doctors by name or specialty"
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                value={searchDoctor}
+                onChange={(e) => setSearchDoctor(e.target.value)}
+              />
 
-export default FindDoctorSearchIC
+              <button
+                type="button"
+                className="findiconimg"
+                aria-label="Search doctors"
+                onMouseDown={handleSearchIconClick}
+              >
+                <MagnifyingGlass className="findIcon" />
+              </button>
+            </div>
+
+            {!doctorResultHidden && (
+              <div className="search-doctor-input-results">
+                {hasResults ? (
+                  <>
+                    {filteredDoctorNames.map((doctor) => (
+                      <div
+                        className="search-doctor-result-item"
+                        key={`doctor-${doctor.name}`}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleDoctorNameSelect(doctor);
+                        }}
+                      >
+                        <span className="result-search-icon">
+                          <MagnifyingGlass />
+                        </span>
+                        <span>{doctor.name.trim()}</span>
+                        <span>DOCTOR</span>
+                      </div>
+                    ))}
+                    {filteredSpecialities.map((speciality) => (
+                      <div
+                        className="search-doctor-result-item"
+                        key={`speciality-${speciality}`}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleSpecialitySelect(speciality);
+                        }}
+                      >
+                        <span className="result-search-icon">
+                          <MagnifyingGlass />
+                        </span>
+                        <span>{speciality}</span>
+                        <span>SPECIALITY</span>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="search-doctor-result-item no-results">
+                    <span>No doctors or specialties found</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </center>
+    </div>
+  );
+};
+
+export default FindDoctorSearchIC;

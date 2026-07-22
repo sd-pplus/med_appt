@@ -89,9 +89,9 @@ const Navbar = () => {
         </li>
         {/* List item for the 'Appointments' link */}
         <li className="link">
-          <a href="#appointments" onClick={closeNav}>
+          <Link to="/appointments" onClick={closeNav}>
             Appointments
-          </a>
+          </Link>
         </li>
 
         {/* Toggle Login / Logout using sessionStorage */}

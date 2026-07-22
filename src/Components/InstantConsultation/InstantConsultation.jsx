@@ -1,85 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './InstantConsultation.css';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import FindDoctorSearchIC from './FindDoctorSearchIC/FindDoctorSearchIC';
 import DoctorCardIC from './DoctorCardIC/DoctorCardIC';
 
+const DOCTORS_API = 'https://api.npoint.io/9a5543d36f1460da2f63';
+
 const InstantConsultation = () => {
-    const [searchParams] = useSearchParams();
-    const [doctors, setDoctors] = useState([]);
-    const [filteredDoctors, setFilteredDoctors] = useState([]);
-    const [isSearched, setIsSearched] = useState(false);
-    
-    const getDoctorsDetails = () => {
-        fetch('https://api.npoint.io/9a5543d36f1460da2f63')
-        .then(res => res.json())
-        .then(data => {
-            if (searchParams.get('speciality')) {
-                // window.reload()
-                const filtered = data.filter(doctor => doctor.speciality.toLowerCase() === searchParams.get('speciality').toLowerCase());
+  const [searchParams] = useSearchParams();
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [isSearched, setIsSearched] = useState(false);
 
-                setFilteredDoctors(filtered);
-                
-                setIsSearched(true);
-                window.reload()
-            } else {
-                setFilteredDoctors([]);
-                setIsSearched(false);
-            }
-            setDoctors(data);
-        })
-        .catch(err => console.log(err));
-    }
-    const handleSearch = (searchText) => {
+  useEffect(() => {
+    const speciality = searchParams.get('speciality');
+    const name = searchParams.get('name');
 
-        if (searchText === '') {
-            setFilteredDoctors([]);
-            setIsSearched(false);
-            } else {
-                
-            const filtered = doctors.filter(
-                (doctor) =>
-                // 
-                doctor.speciality.toLowerCase().includes(searchText.toLowerCase())
-                
-            );
-                
-            setFilteredDoctors(filtered);
-            setIsSearched(true);
-            window.location.reload()
+    fetch(DOCTORS_API)
+      .then((res) => res.json())
+      .then((data) => {
+        const doctors = Array.isArray(data) ? data : [];
+
+        if (name) {
+          const filtered = doctors.filter((doctor) =>
+            doctor.name.toLowerCase().includes(name.toLowerCase())
+          );
+          setFilteredDoctors(filtered);
+          setIsSearched(true);
+          return;
         }
-    };
-    const navigate = useNavigate();
-    useEffect(() => {
-        getDoctorsDetails();
-        // const authtoken = sessionStorage.getItem("auth-token");
-        // if (!authtoken) {
-        //     navigate("/login");
-        // }
-    }, [searchParams])
 
-    return (
-        <center>
-            <div  className="searchpage-container">
-            <FindDoctorSearchIC onSearch={handleSearch} />
-            <div className="search-results-container">
-            {isSearched ? (
-                <center>
-                    <h2>{filteredDoctors.length} doctors are available {searchParams.get('location')}</h2>
-                    <h3>Book appointments with minimum wait-time & verified doctor details</h3>
-                    {filteredDoctors.length > 0 ? (
-                    filteredDoctors.map(doctor => <DoctorCardIC className="doctorcard" {...doctor} key={doctor.name} />)
-                    ) : (
-                    <p>No doctors found.</p>
-                    )}
-                </center>
-                ) : (
-                ''
-                )}
-            </div>
+        if (speciality) {
+          const filtered = doctors.filter(
+            (doctor) =>
+              doctor.speciality.toLowerCase() === speciality.toLowerCase()
+          );
+          setFilteredDoctors(filtered);
+          setIsSearched(true);
+          return;
+        }
+
+        setFilteredDoctors([]);
+        setIsSearched(false);
+      })
+      .catch((err) => console.log(err));
+  }, [searchParams]);
+
+  const searchLabel =
+    searchParams.get('name') || searchParams.get('speciality') || '';
+
+  return (
+    <center>
+      <div className="searchpage-container">
+        <FindDoctorSearchIC />
+        <div className="search-results-container">
+          {isSearched ? (
+            <center>
+              <h2>
+                {filteredDoctors.length} doctors are available
+                {searchLabel ? ` for "${searchLabel}"` : ''}
+              </h2>
+              <h3>
+                Book appointments with minimum wait-time & verified doctor
+                details
+              </h3>
+              {filteredDoctors.length > 0 ? (
+                filteredDoctors.map((doctor) => (
+                  <DoctorCardIC
+                    className="doctorcard"
+                    {...doctor}
+                    key={doctor.name}
+                  />
+                ))
+              ) : (
+                <p>No doctors found.</p>
+              )}
+            </center>
+          ) : (
+            ''
+          )}
         </div>
-        </center>
-    )
-}
+      </div>
+    </center>
+  );
+};
 
-export default InstantConsultation
+export default InstantConsultation;
