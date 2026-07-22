@@ -9,7 +9,7 @@ import Login from './Components/Login/Login';
 import InstantConsultation from './Components/InstantConsultation/InstantConsultation';
 import BookingConsultation from './Components/BookingConsultation';
 import ReviewForm from './Components/ReviewForm/ReviewForm';
-import Profile from './Components/ProfileCard/Profile';
+import ProfileForm from './Components/ProfileCard/ProfileForm';
 
 // Function component for the main App
 function App() {
@@ -31,7 +31,7 @@ function App() {
             />
             <Route path="/appointments" element={<BookingConsultation />} />
             <Route path="/reviews" element={<ReviewForm />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<ProfileForm />} />
           </Routes>
         </Notification>
       </BrowserRouter>

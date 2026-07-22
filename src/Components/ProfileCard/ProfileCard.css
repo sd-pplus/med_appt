@@ -25,19 +25,14 @@
   color: #3685fb;
 }
 
-.profile-page {
-  max-width: 640px;
+.profile-container {
+  max-width: 520px;
   margin: 0 auto;
   padding: 7rem 1.5rem 3rem;
 }
 
-.profile-page h1 {
-  margin: 0 0 1.25rem;
-  font-size: 2rem;
-  color: #0d213f;
-}
-
-.profile-page__card {
+.profile-container form,
+.profile-details {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -45,7 +40,51 @@
   box-shadow: 0 2px 8px rgba(13, 33, 63, 0.06);
 }
 
-.profile-page__card p {
+.profile-details h1 {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  color: #0d213f;
+}
+
+.profile-details p {
   margin: 0.65rem 0;
   color: #2d2d32;
+}
+
+.profile-container label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #0d213f;
+}
+
+.profile-container input {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.profile-container input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.profile-container button {
+  margin-top: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: #3685fb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-container button:hover {
+  background: #2563eb;
 }
