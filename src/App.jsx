@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Import custom components
-import Navbar from './Components/Navbar/Navbar';
+import Notification from './Components/Notification/Notification';
 import Landing_Page from './Components/Landing_Page/LandingPage';
 import Sign_Up from './Components/Sign_up/Sign_up';
 import Login from './Components/Login/Login';
@@ -16,17 +16,20 @@ function App() {
     <div className="App">
       {/* Set up BrowserRouter for routing */}
       <BrowserRouter>
-        {/* Display the Navbar component */}
-        <Navbar />
-
-        {/* Set up the Routes for different pages */}
-        <Routes>
-          <Route path="/" element={<Landing_Page />} />
-          <Route path="/signup" element={<Sign_Up />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/instant-consultation" element={<InstantConsultation />} />
-          <Route path="/appointments" element={<BookingConsultation />} />
-        </Routes>
+        {/* Notification wraps pages and renders Navbar + appointment banner */}
+        <Notification>
+          {/* Set up the Routes for different pages */}
+          <Routes>
+            <Route path="/" element={<Landing_Page />} />
+            <Route path="/signup" element={<Sign_Up />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/instant-consultation"
+              element={<InstantConsultation />}
+            />
+            <Route path="/appointments" element={<BookingConsultation />} />
+          </Routes>
+        </Notification>
       </BrowserRouter>
     </div>
   );

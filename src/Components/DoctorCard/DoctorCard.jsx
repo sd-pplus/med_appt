@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import './DoctorCard.css';
@@ -13,11 +13,25 @@ const DoctorCard = ({ name, speciality, experience, ratings, profilePic }) => {
 
   const doctorImage = profilePic || DEFAULT_DOCTOR_IMG;
 
+  useEffect(() => {
+    const storedAppointment = JSON.parse(localStorage.getItem(name));
+    if (storedAppointment) {
+      setAppointments([storedAppointment]);
+    }
+  }, [name]);
+
   const handleCancel = (appointmentId) => {
     const updatedAppointments = appointments.filter(
       (appointment) => appointment.id !== appointmentId
     );
     setAppointments(updatedAppointments);
+
+    // Clear persisted appointment so Notification hides
+    localStorage.removeItem(name);
+    if (JSON.parse(localStorage.getItem('doctorData'))?.name === name) {
+      localStorage.removeItem('doctorData');
+    }
+    window.dispatchEvent(new Event('appointmentUpdated'));
   };
 
   const handleFormSubmit = (appointmentData) => {
@@ -28,6 +42,14 @@ const DoctorCard = ({ name, speciality, experience, ratings, profilePic }) => {
     const updatedAppointments = [...appointments, newAppointment];
     setAppointments(updatedAppointments);
     setShowModal(false);
+
+    // Persist booking details for Notification
+    localStorage.setItem(
+      'doctorData',
+      JSON.stringify({ name, speciality })
+    );
+    localStorage.setItem(name, JSON.stringify(newAppointment));
+    window.dispatchEvent(new Event('appointmentUpdated'));
   };
 
   return (
