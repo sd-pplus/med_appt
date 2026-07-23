@@ -43,6 +43,7 @@
 }
 
 .reports-btn {
+  display: inline-block;
   background-color: #2190ff;
   color: #fff;
   border: none;
@@ -52,10 +53,13 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  text-decoration: none;
+  text-align: center;
 }
 
 .reports-btn:hover {
   background-color: #1a7de0;
+  color: #fff;
 }
 
 @media (max-width: 700px) {

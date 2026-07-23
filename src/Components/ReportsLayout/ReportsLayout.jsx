@@ -13,36 +13,9 @@ const reports = [
   },
 ];
 
-const REPORT_URL = '/patient_report.pdf';
+const REPORT_URL = `${import.meta.env.BASE_URL}patient_report.pdf`;
 
 const ReportsLayout = () => {
-  const openReportInNewTab = () => {
-    window.open(REPORT_URL, '_blank', 'noopener,noreferrer');
-  };
-
-  const downloadReport = async () => {
-    try {
-      const response = await fetch(REPORT_URL);
-      if (!response.ok) {
-        throw new Error('Unable to fetch report');
-      }
-
-      const blob = await response.blob();
-      const objectUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = 'patient_report.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(objectUrl);
-    } catch (error) {
-      console.error(error);
-      // Fallback: open the PDF if programmatic download fails
-      window.open(REPORT_URL, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   return (
     <div className="reports-page">
       <h1 className="reports-page__title">Reports</h1>
@@ -65,22 +38,23 @@ const ReportsLayout = () => {
                 <td>{report.doctorName}</td>
                 <td>{report.speciality}</td>
                 <td>
-                  <button
-                    type="button"
+                  <a
                     className="reports-btn"
-                    onClick={openReportInNewTab}
+                    href={REPORT_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     View Report
-                  </button>
+                  </a>
                 </td>
                 <td>
-                  <button
-                    type="button"
+                  <a
                     className="reports-btn"
-                    onClick={downloadReport}
+                    href={REPORT_URL}
+                    download="patient_report.pdf"
                   >
                     Download Report
-                  </button>
+                  </a>
                 </td>
               </tr>
             ))}
