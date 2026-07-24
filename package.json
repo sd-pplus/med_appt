@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "start": "vite",
+    "build": "vite build && rm -rf server/build && mv dist server/build",
     "lint": "eslint .",
     "preview": "vite build && vite preview --host"
   },
@@ -14,13 +15,14 @@
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",
     "reactjs-popup": "^2.0.6",
-    "uuid": "^14.0.1"
+    "uuid": "^14.0.1",
+    "vite-plugin-compression": "^0.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
+    "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
